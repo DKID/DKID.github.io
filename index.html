@@ -1,0 +1,892 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>DKID</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DKID">
+    
+
+    
+    <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DKID">
+<meta property="og:url" content="http://DKID.github.io/index.html">
+<meta property="og:site_name" content="DKID">
+<meta property="og:description">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DKID">
+<meta name="twitter:description">
+
+    
+    <link rel="alternative" href="/atom.xml" title="DKID" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="DKID" title="DKID"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="DKID">DKID</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:DKID.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand photo" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/01/05/Linux下各个文件挂载的含义/" title="Linux下各个文件挂载的含义" itemprop="url">Linux下各个文件挂载的含义</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="DKID" target="_blank" itemprop="author">DKID</a>
+		
+  <p class="article-time">
+    <time datetime="2015-01-05T13:20:44.000Z" itemprop="datePublished"> 發表於 2015-01-05</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="Ubuntu(Linux)">Ubuntu(Linux)</h2><ul>
+<li>这两天看很多同事在Ubuntu上搞开发,顿时感觉十分的强大,也想在自己电脑上再装一个Ubuntu变成双系统,之前用Wubi.exe在电脑上安装过,但是那不属于真正的双系统,严格意义上来讲是一个虚拟机.况且最新版的Ubuntu对Wubi.exe兼容性不是很好,因此决定专门分一个区来安装Ubuntu.</li>
+<li>安装过程中出现了一个问题,就是对Linux下文件的挂载点理解不是很到位,安装了几次感觉还是不满意(对于系统,本人有点强迫症).因此就查阅了很多资料研究了下Linux下文件各个挂在的含义,准备研究好后再重新安装一次.</li>
+</ul>
+<h2 id="注意点">注意点</h2><ul>
+<li>首先要安装一个自己满意的Linux系统,必须要自己来定义分区,如果像我一样安装双系统的话就要注意以下几点:<ul>
+<li>一个磁盘只能有4个主分区(IDE情况下),Windows本身的系统已经为一个主分区了,因此Linux最多只能有3个主分区(我电脑中安装了两块硬盘,SSD里面安装了Windows,另外一块机械硬盘分出固定大小来安装Linux,这种情况下Linux关键的几个挂在都可以设成主分区)</li>
+<li>在Windows中,如果是双Window,安装系统①在C系统②在D,启动①时②的文件在D,启动②时①的文件在②中的D,就是不同的系统路径不同,即系统永远为C盘</li>
+<li>Linux中,无论/home是在一分区还是二分区,/home就是/home,只是挂载点不同,双Linux可以使用chroot把另一个系统的目录挂在为自己的目录,修改文件路径丝毫不变.</li>
+<li>总结以上几点:Linux把磁盘挂在到系统,Windows把内核挂在到磁盘.</li>
+</ul>
+</li>
+</ul>
+<h2 id="各个挂载的含义">各个挂载的含义</h2><h3 id="‘/‘">‘/‘</h3><pre><code><span class="string">'/'</span> 是一个特殊的分区,Linux似乎依赖它来挂载磁盘,当内核把自己载入内存后,整个磁盘挂载成了一个文件(如/dev/sda,然后细分/dev/sda1,/dev/sda2、、、、、)。如果用readdir( )函数读取‘／’，那么其下只有一个文件“bin“。没有想当然的/etc、/bin、／lib、、、、、、等等。而其它目录则正确显示目录项。
+
+官方解释:This is <span class="operator">the</span> root <span class="built_in">directory</span>. The mothership. The home field. The <span class="constant">one</span> <span class="operator">and</span> only top <span class="built_in">directory</span> <span class="keyword">for</span> your <span class="keyword">whole</span> computer. Everything, <span class="operator">and</span> I mean EVERYTHING starts here. When you type ‘/home’ what you’re really saying is “<span class="built_in">start</span> <span class="keyword">at</span> / <span class="operator">and</span> <span class="keyword">then</span> go <span class="built_in">to</span> <span class="operator">the</span> home <span class="built_in">directory</span>.”(这个是根目录。每个主机都只有一个根目录，是系统文件开始的地方)
+</code></pre><h3 id="‘/boot’">‘/boot’</h3><pre><code><span class="string">'／boot'</span>  该目录默认下存放的是Linux的启动文件和内核.只是利于修复系统，单独划分并备份确实有利数据安全，同时减少备份量，它也不过保存了内核和grub引导及一些系统信息。
+</code></pre><h3 id="‘/root’">‘/root’</h3><pre><code><span class="string">'/root'</span> This is where <span class="operator">the</span> root user lives. The root user is <span class="operator">the</span> god <span class="operator">of</span> your <span class="keyword">system</span>. Root can <span class="built_in">do</span> anything, up <span class="built_in">to</span> <span class="operator">and</span> including removing your entire filesystem. So be careful <span class="keyword">using</span> root(这个是root用户的目录，root用户是系统中权限最高的用户，可以删除系统文件，因此需要慎用。)
+</code></pre><h3 id="‘/bin’">‘/bin’</h3><pre><code>'/bin' 该目录中存放Linux的常用命令.
+
+ 官方:Here’s where your standard linux utilities(<span class="keyword">read</span> programs) live — things like “<span class="keyword">ls</span>” and “vi” and “<span class="keyword">more</span>”. Generally this directory is included <span class="keyword">in</span> your path. What this <span class="keyword">means</span> is that <span class="keyword">if</span> you <span class="keyword">type</span> ‘<span class="keyword">ls</span>’, /bin is <span class="keyword">one</span> of the places your <span class="keyword">shell</span> will look to see <span class="keyword">if</span> ‘<span class="keyword">ls</span>’ <span class="keyword">means</span> anything.(这个目录存放了Linux中缺省的工具，如<span class="keyword">ls</span>,vi,<span class="keyword">more</span>等命令。这个目录一般都默认在path的环境变量里面。)
+</code></pre><h3 id="‘/etc’">‘/etc’</h3><pre><code>/etc Here’s where <span class="operator">the</span> administrative <span class="operator">and</span> <span class="keyword">system</span> configuration stuff lives. For instance, <span class="keyword">if</span> you have samba installed, <span class="operator">and</span> you want <span class="built_in">to</span> modify <span class="operator">the</span> samba configuration <span class="built_in">files</span>, you’d find them <span class="operator">in</span> /etc/samba.(这个目录主要存放了系统配置方面的文件)
+</code></pre><h3 id="‘/dev’">‘/dev’</h3><pre><code>/dev Here’s <span class="keyword">where</span> files <span class="keyword">that</span> control peripherals live. Talking <span class="keyword">to</span> a printer? Your computer <span class="keyword">is</span> doing <span class="keyword">it</span> <span class="keyword">from</span> here. Same goes <span class="keyword">for</span> disk drives, usb devices, <span class="keyword">and</span> other such stuff. (这个目录主要存放与设备有关的文件。Linux中将设备文件，因此诸如打印机，磁盘驱动，USB驱动等等，都放在这个目录下)
+</code></pre><h3 id="‘/home’">‘/home’</h3><pre><code>/home Here’s where your data is stored. Config <span class="built_in">files</span> specific <span class="built_in">to</span> users, your Desktop <span class="built_in">folder</span>(whick makes your desktop what <span class="keyword">it</span> is), <span class="operator">and</span> <span class="keyword">any</span> data related <span class="built_in">to</span> your user. Each user will have their own /home/username <span class="built_in">folder</span>, <span class="operator">with</span> <span class="operator">the</span> exception <span class="operator">of</span> <span class="operator">the</span> root user.(主要是存放个人数据。除了root用户，其他用户的设置文件，桌面文件以及个人数据都是放在各自的用户目录下面。如test用户，其个人数据以及桌面等文件都是放在/home/test/目录下面)
+</code></pre><h3 id="‘/tmp’">‘/tmp’</h3><pre><code>/tmp This is <span class="operator">the</span> Temporary <span class="built_in">folder</span>. Think <span class="operator">of</span> <span class="keyword">it</span> <span class="keyword">as</span> <span class="operator">a</span> scratch <span class="built_in">directory</span> <span class="keyword">for</span> your Linux <span class="keyword">system</span>. Files that won’t be needed <span class="keyword">by</span> programs once their used once <span class="operator">or</span> twice are <span class="built_in">put</span> here. Many Linux systems are <span class="built_in">set</span> <span class="built_in">to</span> automatically wipe <span class="operator">the</span> /tmp <span class="built_in">folder</span> <span class="keyword">at</span> certain intervals, so don’t <span class="built_in">put</span> things you want <span class="built_in">to</span> keep here(这个是临时目录，一般不要把重要文件放在这个目录里面)
+</code></pre><h3 id="‘/usr’">‘/usr’</h3><pre><code>/usr <span class="constant">Here</span>’s where you’ll find extra utilities that don’t fit under /bin or /etc. <span class="constant">Things</span> like games, printer utilities, and whatnot. /usr is divided into sections like /usr/bin <span class="keyword">for</span> programs, <span class="regexp">/usr/share</span> <span class="keyword">for</span> shared data like sound files or icons, <span class="regexp">/usr/lib</span> <span class="keyword">for</span> libraries whick cannot be directly run but are essential <span class="keyword">for</span> running other programs.<span class="constant">Your</span> package manager takes care <span class="keyword">of</span> the things in /usr <span class="keyword">for</span> you(这个目录存放那些不适合放在/bin或是/etc目录下的额外的工具，如游戏，office等等。这个目录下面还有很多子目录，如/usr/bin/存放程序，/usr/share存放共享数据，/usr/<span class="class"><span class="keyword">lib</span>/存放那些不能直接运行，但是某些程序需要依赖的库文件)</span>
+</code></pre><h3 id="‘/opt’">‘/opt’</h3><pre><code>/opt Here’s where optional stuff is <span class="built_in">put</span>. Trying out <span class="operator">the</span> latest Firefox beta? Install <span class="keyword">it</span> <span class="built_in">to</span> /opt where you can <span class="built_in">delete</span> <span class="keyword">it</span> <span class="keyword">without</span> affecting other settings. Programs <span class="operator">in</span> here usually live inside <span class="operator">a</span> single <span class="built_in">folder</span> whick <span class="operator">contains</span> all <span class="operator">of</span> their data, libraries, etc.(这里主要存放那些可选的程序。你想尝试最新的firefox测试版吗？那就装到/opt目录下吧，这样，当你尝试完，想删掉firefox的时候，你就可以直接删除它，而不影响系统其他任何设置。安装到/opt目录下的程序，它所有的数据、库文件等等都是放在同个目录下面。举个例子：刚才装的测试版firefox，就可以装到/opt/firefox_beta目录下，/opt/firefox_beta目录下面就包含了运行firefox所需要的所有文件、库、数据等等。要删除firefox的时候，你只需删除/opt/firefox_beta目录即可，非常简单。)
+</code></pre><h3 id="‘/use/local’">‘/use/local’</h3><pre><code>/usr/<span class="keyword">local</span> This <span class="keyword">is</span> <span class="keyword">where</span> most manually installed(ie. outside <span class="keyword">of</span> your package manager) software goes. It has <span class="keyword">the</span> same structure <span class="keyword">as</span> /usr. It <span class="keyword">is</span> a good idea <span class="keyword">to</span> leave /usr <span class="keyword">to</span> your package manager <span class="keyword">and</span> <span class="keyword">put</span> any custom scripts <span class="keyword">and</span> things <span class="keyword">into</span> /usr/<span class="keyword">local</span>, <span class="keyword">since</span> nothing important normally lives <span class="keyword">in</span> /usr/<span class="keyword">local</span>.(这里主要存放那些手动安装的软件，即不是通过“新立得”或apt-<span class="keyword">get</span>安装的软件。它和/usr目录具有相类似的目录结构。让软件包管理器来管理/usr目录，而把自定义的脚本（scripts）放到/usr/<span class="keyword">local</span>目录下面，我想这应该是个不错的主意    )
+</code></pre><h3 id="‘/media’">‘/media’</h3><pre><code>/media Some distros <span class="operator"><span class="keyword">use</span> this folder <span class="keyword">to</span> <span class="keyword">mount</span> things <span class="keyword">like</span> usb disks, cd <span class="keyword">or</span> dvd drives <span class="keyword">and</span> other filesystems.(有些linux的发行版使用这个目录来挂载那些usb接口的移动硬盘（包括U盘）、CD/DVD驱动器等等。)</span>
+</code></pre><h3 id="‘/mnt’">‘/mnt’</h3><pre><code>/mnt 临时将别的文件系统挂在该目录下。
+</code></pre><ul>
+<li>以上是我目前整理的对Linux系统下各文件含义的理解,会在今后的学习中不断的完善</li>
+</ul>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/工具/">工具</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/系统/">系统</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/01/05/Linux下各个文件挂载的含义/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/01/05/Linux下各个文件挂载的含义/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand photo" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/01/04/git命令基本的总结/" title="git命令基本的总结" itemprop="url">git命令基本的总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="DKID" target="_blank" itemprop="author">DKID</a>
+		
+  <p class="article-time">
+    <time datetime="2015-01-04T12:15:17.000Z" itemprop="datePublished"> 發表於 2015-01-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>因为工作的需要最近接触了git同步管理,之前一直用SVN可视化工具,一下子转换到命令行层面确实感觉提高了不少B格,但是问题也来了,也就是在不熟悉相应指令的情况下操作起来也是相当麻烦的,因此熟练git的指令对工作的效率尤为重要(尤其是那种比较大的公司用GIT合作开发的).根据公司最近的使用情况与文档整理出了一些常用的命令写在这里便于自己以后查看也欢迎大家参考.因为本人也是刚刚接触GIT,这里中必定有说的不到位的地方,还望能够指正,我会在核实后进行改正.</p>
+<h2 id="1-下载">1.下载</h2><h3 id="1、git命令">1、git命令</h3><p>(1)git close</p>
+<pre><code>如：git <span class="keyword">clone</span> <span class="title">ssh</span>://(地址)
+</code></pre><p>(2)repo命令</p>
+<pre><code><span class="comment">如：repo</span> <span class="comment">init</span> <span class="comment">ssh://(地址)</span>  <span class="literal">-</span><span class="literal">-</span><span class="comment">no</span><span class="literal">-</span><span class="comment">repo</span><span class="literal">-</span><span class="comment">verify</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">repo</span><span class="literal">-</span><span class="comment">branch=stable</span>
+<span class="comment">repo</span> <span class="comment">sync</span>
+    <span class="comment">基线中的所有git仓都下载</span>
+<span class="comment">repo</span> <span class="comment">sync</span> <span class="comment">git_name</span>
+    <span class="comment">只下载某一个git仓的代码</span>
+</code></pre><h3 id="2、更新">2、更新</h3><p>(1)git命令更新</p>
+<pre><code>git fetch
+    只更新本地的远端分支
+git <span class="function"><span class="title">pull</span><span class="params">(根据实际情况,很多大公司merge是需要权限的)</span></span>
+    先更新本地的远端分支,如果当前的本地开发分支与本地的远端分支有关联关系,那么本地的开发分支会merge本地的远端分支
+git pull --<span class="function"><span class="title">rebse</span><span class="params">(我们公司没有人用这个命令,追号的情况就是先pull最新的代码,然后更改再commit)</span></span>
+    先更新本地的远端分支,如果当前的本地开发分支与本地的远端分支有关联关系,那么本地的开发分支会rebase本地的远端分支
+</code></pre><p>(2)repo命令更新</p>
+<pre><code>repo <span class="keyword">sync</span>
+    基线中所有的git仓都会更新
+repo <span class="keyword">sync</span> .
+    基线中当前所在的git仓会更新
+</code></pre><h3 id="3、推送">3、推送</h3><p>(1)git命令(<em>git命令推送的方式没有用过,在公司我一般直接用repo</em>)</p>
+<pre><code>git <span class="keyword">push</span> origin local_branch:server_branch
+    提交不走gerrit评审,直接推送到服务器上
+git <span class="keyword">push</span> origin lical_branch:refs<span class="regexp">/for/</span>server_branch
+    把提交推送到gerrit服务器进行评审,评审通过后,可以入到服务器上
+</code></pre><p>(2)repo命令</p>
+<pre><code>repo upload
+    将基线中的各个仓的新提交,推送到gerrit服务器上面进行评审
+repo upload .
+    仅将当前苍中的新提交推到gerri服务器上面进行评审
+</code></pre><h3 id="4、文件用工作目录添加到缓冲区">4、文件用工作目录添加到缓冲区</h3><p>(1)添加一个文件:</p>
+<pre><code><span class="label">git</span> <span class="keyword">add </span>filename
+</code></pre><p>(2)添加多个文件</p>
+<pre><code><span class="label">git</span> <span class="keyword">add </span>*.txt
+<span class="label">git</span> <span class="keyword">add </span>-A
+</code></pre><h3 id="5、文件由缓冲区添加到本地版本库">5、文件由缓冲区添加到本地版本库</h3><pre><code>git <span class="operator"><span class="keyword">commit</span> -<span class="keyword">m</span><span class="string">"注释信息"</span>
+git <span class="keyword">commit</span> <span class="comment">--amend</span>
+    会修改最近的一次提交记录
+
+(之前我在协同开发的时候使用git <span class="keyword">commit</span> <span class="comment">--amend出现过一次错误,为了让每次的代码都能是最新的我每次都在更改代码的时候先rm -rf 模块名 然后重新repo下,同时删除之前的分支,这时候再次提交的时候会发现我与其他人的代码冲突了,repo log查看修改记录发现有别人的记录,这是应为在删除分支后再次创建同样名字的远程分支,除了名字一样,其他的分支信息都已经不在了,因此要在--amend的时候保证是在同一个分支下面)</span></span>
+</code></pre><h3 id="6、文件由缓冲区退回到工作目录">6、文件由缓冲区退回到工作目录</h3><pre><code>git <span class="operator"><span class="keyword">reset</span> <span class="keyword">HEAD</span>
+git <span class="keyword">reset</span> <span class="keyword">HEAD</span> filename</span>
+</code></pre><h3 id="7、本地版本库的回退">7、本地版本库的回退</h3><p>(1)软回退:工作目录不回退,缓冲区,版本库进行回退</p>
+<pre><code>git <span class="operator"><span class="keyword">reset</span> <span class="keyword">HEAD</span>^^
+git <span class="keyword">reset</span> <span class="keyword">HEAD</span>~<span class="number">2</span></span>
+</code></pre><p>(2)硬回退:工作目录、缓冲区、版本库进行回退</p>
+<pre><code>git <span class="operator"><span class="keyword">reset</span> <span class="keyword">HEAD</span>^^ <span class="comment">--hard</span>
+git <span class="keyword">reset</span> <span class="keyword">HEAD</span>~<span class="number">2</span> <span class="comment">--hard</span></span>
+</code></pre><p>(3)回退某提交 (<em>没用过,有个疑问,这个回退是回退gerrit上的提交吗?</em>)</p>
+<pre><code>git revert <span class="operator"><span class="keyword">commit</span> -<span class="keyword">id</span></span>
+</code></pre><h3 id="8、分支操作">8、分支操作</h3><p>(1)分支查看</p>
+<pre><code><span class="label">git</span> <span class="keyword">branch
+</span>    查看本地的开发分支
+<span class="label">git</span> <span class="keyword">branch </span>-r
+    查看本地的远端分支
+<span class="label">git</span> <span class="keyword">branch </span>-a
+    查看本地的全部分支
+</code></pre><p>(2)分支切换</p>
+<pre><code><span class="title">git</span> checkout branch_name
+</code></pre><p>(3)新建分支</p>
+<pre><code>a、git命令
+    git <span class="keyword">branch </span>new_branch_name
+    git <span class="keyword">branch </span>new_branch_name old_branch_name
+    git <span class="keyword">branch </span>new_branch_name tag_name
+
+<span class="keyword">b、repo命令
+</span>    repo start new_branch_name --all
+</code></pre><p>(4)删除分支</p>
+<pre><code><span class="label">git</span> <span class="keyword">branch </span>-d <span class="keyword">branch_name
+</span><span class="label">git</span> <span class="keyword">branch </span>-D <span class="keyword">branch_name</span>
+</code></pre><p>(5)分支合并</p>
+<pre><code>a、git <span class="operator"><span class="keyword">merge</span> branch_name
+b、git rebase branch_name
+<span class="keyword">c</span>、git cherry-pick <span class="keyword">commit</span>-<span class="keyword">id</span></span>
+</code></pre><p>(6)基线升级</p>
+<pre><code>git rebae -i <span class="comment">--onto A B C</span>
+</code></pre><h3 id="9、标签">9、标签</h3><p>(1)生成标签</p>
+<pre><code>git <span class="keyword">tag</span> <span class="title">-a</span> tag_name -m <span class="string">"tag descripe"</span>
+</code></pre><p>(2)推送标签</p>
+<pre><code><span class="label">git</span> <span class="keyword">push </span>tag_name
+</code></pre><h3 id="10、查看差异">10、查看差异</h3><pre><code>git diff
+    工作目录与本地版本库比较
+git diff HEAD
+    工作目录与缓冲区比较
+git diff --caches
+    缓冲区与本地版本库比较
+git diff HEAD^ HEAD
+git diff bra<span class="label">nch_name_1</span> bra<span class="label">nch_name2</span>
+</code></pre><h3 id="11、查看log">11、查看log</h3><pre><code>git <span class="built_in">log</span>
+<span class="keyword">p</span><span class="variable">s:</span>参数太多了~~,git <span class="built_in">log</span> --<span class="keyword">help</span>
+</code></pre><h3 id="12、查看状态">12、查看状态</h3><pre><code>git <span class="keyword">status</span>
+</code></pre><h3 id="13、帮助">13、帮助</h3><pre><code>git <span class="comment">--help</span>
+git push <span class="comment">--help</span>
+</code></pre><h3 id="14、repo相关命令">14、repo相关命令</h3><pre><code>repo init ...
+repe sync
+repo sync git name
+repo <span class="operator"><span class="keyword">start</span> <span class="comment">--all branch_name</span>
+repo abandom branch_name
+repo upload
+repo upload .
+repo <span class="keyword">forall</span> -<span class="keyword">c</span> <span class="string">'command'</span>
+repo manifest -r -o file_name</span>
+</code></pre><hr>
+<h2 id="本文不断更新中~~">本文不断更新中~~</h2>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/工具/">工具</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/git/">git</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/01/04/git命令基本的总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/01/04/git命令基本的总结/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand photo" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/12/26/Handler消息机制/" title="Handler消息机制" itemprop="url">Handler消息机制</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="DKID" target="_blank" itemprop="author">DKID</a>
+		
+  <p class="article-time">
+    <time datetime="2014-12-25T18:38:53.000Z" itemprop="datePublished"> 發表於 2014-12-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="关键词语解释">关键词语解释</h3><ul>
+<li>Message:消息,其中包含了消息ID,消息对象以及处理的数据等,由MessageQueue统一列队,最终由Handler处理</li>
+<li>Handler:处理者,负责Message发送消息及处理.Handler通过与Looper进行沟通,从而使用Handler时,需要实现handlerMessage(Message msg)方法来对待特定的Message进行处理,例如更新UI等(主线程中才行)</li>
+<li>MessageQueue：消息队列；用来存放Handler发送过来的消息，并按照FIFO（先入先出队列）规则执行。当然，存放Message并非实际意义的保存，而是将Message以链表的方式串联起来的，等Looper的抽取。</li>
+<li>Looper：消息泵，不断从MessageQueue中抽取Message执行。因此，一个线程中的MessageQueue需要一个Looper进行管理。Looper是当前线程创建的时候产生的（UI Thread即主线程是系统帮忙创建的Looper，而如果在子线程中，需要手动在创建线程后立即创建Looper[调用Looper.prepare()方法]）。也就是说，会在当前线程上绑定一个Looper对象.</li>
+<li>Thread：线程；负责调度消息循环，即消息循环的执行场所<h3 id="大体流程">大体流程</h3></li>
+<li>Message类的obtain方法<ul>
+<li>消息队列顺序的维护是使用单链表的形式来维护的</li>
+<li>把消息池里的第一条数据取出来,然后把第二条编程第一条</li>
+</ul>
+</li>
+</ul>
+<p>代码</p>
+<pre><code><span class="keyword">if</span>(sPool != null) {
+    Message <span class="keyword">m</span> = sPool;
+    sPool = <span class="keyword">m</span>.next;
+    sPoolSize--;
+    <span class="keyword">return</span> <span class="keyword">m</span>;    
+}
+</code></pre><ul>
+<li>创建Handler对象时,在构造方法中会获取Looper和MessageQueue的对象</li>
+</ul>
+<p>代码</p>
+<pre><code><span class="keyword">public</span> Handler(){
+    <span class="attribute">...</span>
+    <span class="comment">//拿到looper</span>
+    mLooper = Looper<span class="built_in">.</span>myLooper();
+    <span class="attribute">...</span>
+    <span class="comment">//拿到消息队列</span>
+    mQueue = mLooper<span class="built_in">.</span>mQueue;
+    mCallback = <span class="built_in">null</span>;
+}
+</code></pre><ul>
+<li>查看myLooper方法体，发现Looper对象是通过ThreadLocal得到的，在查找ThreadLocal的set方法时发现<ul>
+<li>Looper是直接new出来的，并且在Looper的构造方法中，new出了消息队列对象</li>
+</ul>
+</li>
+</ul>
+<p>代码</p>
+<pre><code>sThreadLocal.<span class="built_in">set</span>(<span class="keyword">new</span> Looper());
+
+<span class="function"><span class="keyword">private</span> <span class="title">Looper</span><span class="params">()</span> </span>{
+  mQueue = <span class="keyword">new</span> MessageQueue();
+  mRun = <span class="literal">true</span>;
+  mThread = Thread.currentThread();
+ }
++ sThreadLocal.<span class="built_in">set</span>(<span class="keyword">new</span> Looper())是在Looper.prepare方法中调用的
+</code></pre><ul>
+<li>prepare方法是在prepareMainLooper()方法中调用的</li>
+</ul>
+<p>代码</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="function"><span class="keyword">void</span> <span class="title">prepareMainLooper</span><span class="params">()</span> </span>{
+     prepare();
+  ...
+}
+</code></pre><ul>
+<li>在应用启动时，主线程要被启动，ActivityThread会被创建，在此类的main方法中</li>
+</ul>
+<p>代码</p>
+<pre><code> <span class="tag">public</span> <span class="tag">static</span> <span class="tag">final</span> <span class="tag">void</span> <span class="tag">main</span>(String[] args) {
+  ...
+  <span class="comment">//创建Looper和MessageQueue</span>
+  <span class="tag">Looper</span><span class="class">.prepareMainLooper</span>();
+  ...
+  <span class="comment">//轮询器开始轮询</span>
+  <span class="tag">Looper</span><span class="class">.loop</span>();
+  ...
+}
+</code></pre><ul>
+<li>Looper.loop()方法中有一个死循环</li>
+</ul>
+<p>代码</p>
+<pre><code><span class="keyword">while</span> (<span class="literal">true</span>) {
+  <span class="comment">//取出消息队列的消息，可能会阻塞</span>
+  Message msg = <span class="built_in">queue</span><span class="built_in">.</span>next(); <span class="comment">// might block</span>
+  <span class="attribute">...</span>
+  <span class="comment">//解析消息，分发消息</span>
+  msg<span class="built_in">.</span>target<span class="built_in">.</span>dispatchMessage(msg);
+  <span class="attribute">...</span>
+}
+</code></pre><ul>
+<li>Linux的一个进程间通信机制：管道（pipe）。原理：在内存中有一个特殊的文件，这个文件有两个句柄（引用），一个是读取句柄，一个是写入句柄</li>
+<li>主线程Looper从消息队列读取消息，当读完所有消息时，进入睡眠，主线程阻塞。子线程往消息队列发送消息，并且往管道文件写数据，主线程即被唤醒，从管道文件读取数据，主线程被唤醒只是为了读取消息，当消息读取完毕，再次睡眠</li>
+<li>Handler发送消息，sendMessage的所有重载，实际最终都调用了sendMessageAtTime</li>
+</ul>
+<p>代码</p>
+<pre><code><span class="keyword">public</span> <span class="built_in">boolean</span> sendMessageAtTime(Message msg, long uptimeMillis)
+{
+ <span class="attribute">...</span>
+  <span class="comment">//把消息放到消息队列中</span>
+  sent = <span class="built_in">queue</span><span class="built_in">.</span>enqueueMessage(msg, uptimeMillis);
+ <span class="attribute">...</span>
+}
+</code></pre><ul>
+<li>enqueueMessage把消息通过重新排序放入消息队列</li>
+</ul>
+<p>代码</p>
+<pre><code><span class="keyword">final</span> <span class="keyword">boolean</span> enqueueMessage(Message msg, <span class="keyword">long</span> when) {
+  ...
+  <span class="keyword">final</span> <span class="keyword">boolean</span> needWake;
+  <span class="keyword">synchronized</span> (<span class="keyword">this</span>) {
+     ...
+      <span class="comment">//对消息的重新排序，通过判断消息队列里是否有消息以及消息的时间对比</span>
+      msg.when = when;
+
+      Message p = mMessages;
+      <span class="comment">//把放入消息队列的消息置为消息队列第一条消息</span>
+      <span class="keyword">if</span> (p == <span class="keyword">null</span> || when == <span class="number">0</span> || when &lt; p.when) {
+          msg.<span class="keyword">next</span> = p;
+          mMessages = msg;
+          needWake = mBlocked; <span class="comment">// new head, might need to wake up</span>
+      } <span class="keyword">else</span> {
+          <span class="comment">//判断时间顺序，为刚放进来的消息寻找合适的位置</span>
+          Message prev = <span class="keyword">null</span>;
+          <span class="keyword">while</span> (p != <span class="keyword">null</span> &amp;&amp; p.when &lt;= when) {
+              prev = p;
+              p = p.<span class="keyword">next</span>;
+          }
+          msg.<span class="keyword">next</span> = prev.<span class="keyword">next</span>;
+          prev.<span class="keyword">next</span> = msg;
+          needWake = <span class="keyword">false</span>; <span class="comment">// still waiting on head, no need to wake up</span>
+      }
+  }
+  <span class="comment">//唤醒主线程</span>
+  <span class="keyword">if</span> (needWake) {
+      nativeWake(mPtr);
+  }
+  <span class="keyword">return</span> <span class="keyword">true</span>;
+}
+</code></pre><ul>
+<li>Looper.loop方法中，获取消息，然后分发消息</li>
+</ul>
+<p>代码</p>
+<pre><code><span class="comment">//获取消息队列的消息</span>
+Message msg = <span class="built_in">queue</span><span class="built_in">.</span>next(); <span class="comment">// might block</span>
+<span class="attribute">...</span>
+<span class="comment">//分发消息，消息由哪个handler对象创建，则由它分发，并由它的handlerMessage处理  msg.target.dispatchMessage(msg);</span>
+</code></pre><ul>
+<li>message对象的target属性，用于记录该消息由哪个Handler创建，在obtain方法中赋值</li>
+</ul>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/源码分析/">源码分析</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2014/12/26/Handler消息机制/#comments" class="ds-thread-count comments-count-link" data-thread-key="2014/12/26/Handler消息机制/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand photo" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/10/16/Android开发环境的搭建/" title="Android开发环境的搭建" itemprop="url">Android开发环境的搭建</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="DKID" target="_blank" itemprop="author">DKID</a>
+		
+  <p class="article-time">
+    <time datetime="2014-10-15T18:38:53.000Z" itemprop="datePublished"> 發表於 2014-10-16</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="一、获取SDK工具包(直接到谷歌官网下载就可以)">一、获取SDK工具包(直接到谷歌官网下载就可以)</h3><h4 id="1、下载开发工具和开发平台_工具包,包含以下内容:">1、下载开发工具和开发平台 工具包,包含以下内容:</h4><ul>
+<li>Eclipse + ADT 插件</li>
+<li>Android SDK </li>
+<li>Android Platform-tools</li>
+<li>最新的Android 开发平台</li>
+<li>最新的模拟器镜像</li>
+</ul>
+<p>下载下来，解压后，是这样的。<br><img src="http://i.imgur.com/WW4EzEX.png" alt=""></p>
+<p>里面的Hardware_Accelerated_Execution_Manager中的IntelHaxm.exe只能用于高版本的intel的cpu，用于加速模拟器的启动速度。<br><img src="http://i.imgur.com/TkfURar.png" alt=""></p>
+<h4 id="2、创建一个Android模拟器">2、创建一个Android模拟器</h4><p><img src="http://i.imgur.com/INqVjTn.png" alt=""></p>
+<h3 id="二、Android模拟器的一些问题">二、Android模拟器的一些问题</h3><h4 id="1、Android模拟器无法启动">1、Android模拟器无法启动</h4><p>错误提示为：</p>
+<p>invalid command-line parameter: Files\Android\android-sdk\tools/emulator-arm.exe.Hint: use ‘@foo’ to launch a virtual device named ‘foo’.please use -help for more information </p>
+<p>解决方法：</p>
+<ul>
+<li>你的安装路径中有中文，那么就重新安装SDK，放在全英文路径下</li>
+<li>添加Android_SDK_HOME 环境变量 ()</li>
+</ul>
+<h4 id="2、Android模拟器无法保存数">2、Android模拟器无法保存数</h4><p>原因： </p>
+<p>电脑意外重启,或者模拟器非法关闭.<br>正常情况下,当模拟器被开启后.<br>在x:\Documents and Settings\Administrator.android\avd\xxx.avd的目录下会产生<br>cache.img.lock, hardware-qemu.ini.lock,  sdcard.img.lock, userdata-qemu.img.lock这样的文件夹,用来标记当前模拟器设备已经开启,当模拟器设备关闭的时候 会自动删除这些文件夹. </p>
+<p>如果电脑意外重启或者模拟器被非法关闭. 这几个文件夹是不会被自动删除的. 系统任务android模拟器还处于打开状态. 新开启的模拟器就无法保存数据了. </p>
+<p>解决方法: </p>
+<p>删除这些.lock的文件夹 </p>
+<p>win7: C:\Users.android\avd\sophone.avd </p>
+<p><img src="http://i.imgur.com/4a7hLCo.png" alt=""></p>
+<h4 id="3、“尚未注册网络”错误信息的解决办法">3、“尚未注册网络”错误信息的解决办法</h4><p><img src="http://i.imgur.com/MquQXY7.jpg" alt=""></p>
+<p>打开Android模拟器时，出现无信号，拔打电话或发短信时，提示“尚未注册网络”错误信息的解决方案如下.</p>
+<pre><code>场景一：你的电脑没有连接上互联网，同时也没有在局域网。 
+解决办法：右键点击网上邻居,选择<span class="string">"属性"</span>,在网络连接窗口中右键点击<span class="string">"本地连接"</span>,选择<span class="string">"属性"</span>,设置TCP/IP属性如下: 
+    IP地址:<span class="number">192.168</span><span class="number">.1</span><span class="number">.100</span> 
+    子网掩码:<span class="number">255.255</span><span class="number">.255</span><span class="number">.0</span> 
+    默认网关:<span class="number">192.168</span><span class="number">.1</span><span class="number">.100</span> 
+    首选DNS服务器:<span class="number">192.168</span><span class="number">.1</span><span class="number">.100</span> 
+
+场景二：你的电脑没有连接上互联网，但在局域网。 
+解决办法：右键点击网上邻居,选择<span class="string">"属性"</span>,在网络连接窗口中右键点击<span class="string">"本地连接"</span>,选择<span class="string">"属性"</span>,设置TCP/IP属性如下: 
+    IP地址:设置成你所在局域网的IP，如：<span class="number">192.168</span><span class="number">.1</span><span class="number">.100</span> 
+    子网掩码:设置成你所在局域网的掩码，如：<span class="number">255.255</span><span class="number">.255</span><span class="number">.0</span> 
+    默认网关:设置成你所在局域网的网关，一般网关的IP格式为：*.*.*<span class="number">.1</span>，如：<span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span> 
+    首选DNS服务器:设置成你所在局域网的路由器IP，一般路由器的IP格式为：*.*.*<span class="number">.1</span>，如：<span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span>
+
+最后一种解决方案是：让你的电脑连接上互联网。 
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Android/">Android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2014/10/16/Android开发环境的搭建/#comments" class="ds-thread-count comments-count-link" data-thread-key="2014/10/16/Android开发环境的搭建/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="DKID" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分類</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Android/" title="Android">Android<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/工具/" title="工具">工具<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Android/" title="Android">Android<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/系统/" title="系统">系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/源码分析/" title="源码分析">源码分析<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/DKID" target="_blank" title="DKID">DKID</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> My name is DKID, this is my blog <br/>
+			I am a Android Developer.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/DKID" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:zengdkid@foxmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="DKID">DKID</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"dkid"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>
