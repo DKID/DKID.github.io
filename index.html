@@ -47,7 +47,7 @@
 				<h1 class="site-name"><a href="/" title="DKID">DKID</a></h1>
 				<h2 class="blog-motto"></h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -81,6 +81,174 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/10/28/视频文件时间计算/" title="视频文件时间计算" itemprop="url">视频文件时间计算</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="DKID" target="_blank" itemprop="author">DKID</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-28T08:26:28.000Z" itemprop="datePublished"> 发表于 2015-10-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <ul>
+<li>作为程序猿,学习必须的是无止境,有的时候在必要的情况需要,前台、后台、UI、动效 一人来搞定(这种情况初创公司比较多),因此掌握良好、快速、高效的学习方法是必须的.</li>
+<li>今天公司中午休息时间,看到一位长相不错的妹子在看视频学习(PS:但是个人认为视频学习并不是一个高效的学习方式,前期入门的时候很适合,但是后期发展的话,更好的方法是有针对性的看一些原版书籍以及大神们的博客),看着妹子桌上的笔记上记录着所要看的视频的时间以及计划着每天需要看的视频目录,目录到今天所要看的内容,很显然没有实现整理视频目录的原因是 很多格式的视频文件需要打开后看时间轴才直到视频的长度 统计起来很麻烦 , 本着 “乐于助人,无私奉献” 的精神,我向妹子灌输了一些学习方法以及学习计划的重要性,总结一句好就是告诉她:事先整理好需要学习的视频的目录是多么重要.</li>
+<li>最终的结果就是妹子问我能不能把她一起整理,说一个人整理太累   ~汗~ (所谓的不做死就不会死) 对于这种事我一向是拒绝的, 出于好心,我也就答应了 ,但是作为一名程序猿,我当然不会傻傻的帮她整理,直接代码解决, 一劳永逸 </li>
+<li><p>言归正传,看下,我给她实现的功能,直接上代码</p>
+<h3 id="代码">代码</h3><pre><code><span class="keyword">package</span> VideoTime;
+
+<span class="keyword">import</span> it.sauronsoftware.jave.Encoder;
+<span class="keyword">import</span> it.sauronsoftware.jave.MultimediaInfo;
+<span class="keyword">import</span> java.io.File;
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> javax.swing.JOptionPane;
+<span class="keyword">public</span> class Videotime {
+
+<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">long</span> time;
+<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">String</span> count = <span class="string">""</span>;
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="keyword">String</span>[] args) <span class="keyword">throws</span> IOException {
+
+    <span class="comment">// 输入需要遍历的路径</span>
+    <span class="keyword">String</span> n = JOptionPane.showInputDialog(<span class="string">"请输入路径:直接复制资源管理器路径即可"</span>);
+    <span class="keyword">if</span> (n != <span class="keyword">null</span>) {
+        File file = <span class="keyword">new</span> File(n);
+        listAllFile(file);
+    } <span class="keyword">else</span> {
+        System.out.<span class="built_in">println</span>(<span class="string">"路径有问题"</span>);
+    }
+    System.out
+            .<span class="built_in">println</span>(<span class="string">"所有视频的总长度为:"</span> + time / <span class="number">3600000</span> + <span class="string">"时"</span> + (time % <span class="number">3600000</span>)
+                    / <span class="number">60000</span> + <span class="string">"分"</span> + (time % <span class="number">60000</span>) / <span class="number">1000</span> + <span class="string">"秒！"</span>);
+}
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> listAllFile(File f) {
+    <span class="keyword">if</span> (f.isDirectory()) {
+        File[] fs = f.listFiles();
+        System.out.<span class="built_in">println</span>(count + f.getName());
+        count = count + <span class="string">"----"</span>;
+        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; fs.length; i++) {
+
+            <span class="keyword">try</span> {
+                listAllFile(fs[i]);
+            } <span class="keyword">catch</span> (Exception e) {
+            }
+        }
+        count = truncateHeadString(count, <span class="number">4</span>);
+    } <span class="keyword">else</span>
+        findVideo(f);
+}
+
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> findVideo(File f) {
+    <span class="keyword">String</span> name = f.toString();
+    <span class="keyword">if</span> (name.endsWith(<span class="string">".mp4"</span>) | name.endsWith(<span class="string">".avi"</span>)
+            | name.endsWith(<span class="string">".rmvb"</span>) | name.endsWith(<span class="string">".rm"</span>)) {
+        System.out.<span class="built_in">println</span>(count + f.getName());
+        countViewTime(f);
+    }
+}
+
+<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> countViewTime(File source) {
+    Encoder rencoder = <span class="keyword">new</span> Encoder();
+    <span class="keyword">try</span> {
+        MultimediaInfo m = rencoder.getInfo(source);
+        <span class="keyword">long</span> ls = m.getDuration();
+        System.out.<span class="built_in">println</span>(<span class="string">"此视频时长为:"</span> + ls / <span class="number">60000</span> + <span class="string">"分"</span> + (ls % <span class="number">60000</span>)
+                / <span class="number">1000</span> + <span class="string">"秒！"</span>);
+        time = time + ls;
+    } <span class="keyword">catch</span> (Exception e) {
+        System.out.<span class="built_in">println</span>(<span class="string">"读取失败"</span>);
+        e.printStackTrace();
+    }
+}
+
+<span class="comment">// 去除字符串开头几位</span>
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">String</span> truncateHeadString(<span class="keyword">String</span> origin, <span class="built_in">int</span> count) {
+    <span class="keyword">if</span> (origin == <span class="keyword">null</span> || origin.length() &lt; count) {
+        <span class="keyword">return</span> <span class="keyword">null</span>;
+    }
+    <span class="built_in">char</span>[] arr = origin.toCharArray();
+    <span class="built_in">char</span>[] ret = <span class="keyword">new</span> <span class="built_in">char</span>[arr.length - count];
+    <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; ret.length; i++) {
+        ret[i] = arr[i + count];
+    }
+    <span class="keyword">return</span> <span class="keyword">String</span>.copyValueOf(ret);
+}
+}
+</code></pre></li>
+<li><p>需要值得注意的是,这里需要导入一个 JAVE 这个开源项目的jar包</p>
+</li>
+<li>项目地址: <a href="http://www.sauronsoftware.it/projects/jave/manual.php" target="_blank" rel="external">http://www.sauronsoftware.it/projects/jave/manual.php</a></li>
+<li><p>该工程我已经传到了github上 地址: <a href="https://github.com/DKID/VideoTime" target="_blank" rel="external">https://github.com/DKID/VideoTime</a></p>
+</li>
+<li><p>至此任务已经顺利完成,这边对视频的格式,我只是支持了一般的mp4、avi、rmvb、rm的格式,如果有新的还可以在上面代码中增加,JAVE 开源项目(这个项目原本是用来做格式转换的)支持市面上绝大多数的视频格式</p>
+</li>
+<li><p>实验下,我遍历我U盘中的电影(没有禁片);</p>
+</li>
+</ul>
+<h3 id="视频目录输出样式">视频目录输出样式</h3><pre><code>VIDEO
+----我是路人甲.mp4
+此视频时长为:<span class="number">134</span>分<span class="number">15</span>秒！
+----煎饼侠.mp4
+此视频时长为:<span class="number">99</span>分<span class="number">1</span>秒！
+----西游记之大圣归来.mp4
+此视频时长为:<span class="number">88</span>分<span class="number">48</span>秒！
+所有视频的总长度为:<span class="number">5</span>时<span class="number">22</span>分<span class="number">5</span>秒！
+</code></pre><ul>
+<li>功能虽然简单了点,但是基本实现了,视频目录的整理与时间的计算.</li>
+</ul>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/工具/">工具</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/项目/">项目</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/10/28/视频文件时间计算/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/10/28/视频文件时间计算/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand photo" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/10/27/git配置多个ssh-key/" title="git配置多个ssh-key" itemprop="url">git配置多个ssh-key</a>
   </h1>
   <p class="article-author">By
@@ -88,7 +256,7 @@
 		<a href="/about" title="DKID" target="_blank" itemprop="author">DKID</a>
 		
   <p class="article-time">
-    <time datetime="2015-10-27T12:49:06.000Z" itemprop="datePublished"> 發表於 2015-10-27</time>
+    <time datetime="2015-10-27T12:49:06.000Z" itemprop="datePublished"> 发表于 2015-10-27</time>
     
   </p>
 </header>
@@ -178,7 +346,7 @@
 		<a href="/about" title="DKID" target="_blank" itemprop="author">DKID</a>
 		
   <p class="article-time">
-    <time datetime="2015-01-05T13:20:44.000Z" itemprop="datePublished"> 發表於 2015-01-05</time>
+    <time datetime="2015-01-05T13:20:44.000Z" itemprop="datePublished"> 发表于 2015-01-05</time>
     
   </p>
 </header>
@@ -273,7 +441,7 @@
 		<a href="/about" title="DKID" target="_blank" itemprop="author">DKID</a>
 		
   <p class="article-time">
-    <time datetime="2015-01-04T12:15:17.000Z" itemprop="datePublished"> 發表於 2015-01-04</time>
+    <time datetime="2015-01-04T12:15:17.000Z" itemprop="datePublished"> 发表于 2015-01-04</time>
     
   </p>
 </header>
@@ -439,7 +607,7 @@ repo manifest -r -o file_name</span>
 		<a href="/about" title="DKID" target="_blank" itemprop="author">DKID</a>
 		
   <p class="article-time">
-    <time datetime="2014-12-25T18:38:53.000Z" itemprop="datePublished"> 發表於 2014-12-26</time>
+    <time datetime="2014-12-25T18:38:53.000Z" itemprop="datePublished"> 发表于 2014-12-26</time>
     
   </p>
 </header>
@@ -641,7 +809,7 @@ Message msg = <span class="built_in">queue</span><span class="built_in">.</span>
 		<a href="/about" title="DKID" target="_blank" itemprop="author">DKID</a>
 		
   <p class="article-time">
-    <time datetime="2014-10-15T18:38:53.000Z" itemprop="datePublished"> 發表於 2014-10-16</time>
+    <time datetime="2014-10-15T18:38:53.000Z" itemprop="datePublished"> 发表于 2014-10-16</time>
     
   </p>
 </header>
@@ -733,10 +901,10 @@ Message msg = <span class="built_in">queue</span><span class="built_in">.</span>
 
 
 </div>
-      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
 <aside class="clearfix">
 
   
@@ -751,7 +919,7 @@ Message msg = <span class="built_in">queue</span><span class="built_in">.</span>
 
   
 <div class="categorieslist">
-	<p class="asidetitle">分類</p>
+	<p class="asidetitle">分类</p>
 		<ul>
 		
 		  
@@ -759,7 +927,7 @@ Message msg = <span class="built_in">queue</span><span class="built_in">.</span>
 		  
 		
 		  
-			<li><a href="/categories/工具/" title="工具">工具<sup>3</sup></a></li>
+			<li><a href="/categories/工具/" title="工具">工具<sup>4</sup></a></li>
 		  
 		
 		</ul>
@@ -768,11 +936,15 @@ Message msg = <span class="built_in">queue</span><span class="built_in">.</span>
 
   
 <div class="tagslist">
-	<p class="asidetitle">標簽</p>
+	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
 			
 				<li><a href="/tags/git/" title="git">git<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/项目/" title="项目">项目<sup>1</sup></a></li>
 			
 		
 			
@@ -792,7 +964,7 @@ Message msg = <span class="built_in">queue</span><span class="built_in">.</span>
 
 
   <div class="linkslist">
-  <p class="asidetitle">友情鏈接</p>
+  <p class="asidetitle">友情链接</p>
     <ul>
         
           <li>
@@ -968,7 +1140,7 @@ $(document).ready(function(){
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 
